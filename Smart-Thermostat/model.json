@@ -1,0 +1,154 @@
+{
+    "detectorModelDefinition": {
+        "states": [
+            {
+                "stateName": "standby",
+                "onInput": {
+                    "events": [],
+                    "transitionEvents": [
+                        {
+                            "eventName": "startHeating",
+                            "condition": "($input.thermostat.current.state.reported.temperature <= $variable.heatingThresholdUnoccupied) || ($input.thermostat.current.state.reported.roomOccupancy && $input.thermostat.current.state.reported.temperature <= $variable.heatingThresholdOccupied) ",
+                            "actions": [],
+                            "nextState": "heating"
+                        },
+                        {
+                            "eventName": "startCooling",
+                            "condition": "($input.thermostat.current.state.reported.temperature >= $variable.coolingThresholdUnoccupied) || ($input.thermostat.current.state.reported.roomOccupancy && $input.thermostat.current.state.reported.temperature >= $variable.coolingThresholdOccupied) ",
+                            "actions": [],
+                            "nextState": "cooling"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "setThresholds",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "heatingThresholdUnoccupied",
+                                        "value": "60"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "heatingThresholdOccupied",
+                                        "value": "68"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "coolingThresholdOccupied",
+                                        "value": "72"
+                                    }
+                                },
+                                {
+                                    "setVariable": {
+                                        "variableName": "coolingThresholdUnoccupied",
+                                        "value": "80"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "setStandbyInShadow",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "'$aws/things/012370770486CB5F01/shadow/update'",
+                                        "payload": {
+                                            "contentExpression": "'{\"state\":{\"desired\":{\"hvacStatus\":\"STANDBY\"}}}'",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "cooling",
+                "onInput": {
+                    "events": [],
+                    "transitionEvents": [
+                        {
+                            "eventName": "stopCooling",
+                            "condition": "(!$input.thermostat.current.state.reported.roomOccupancy && $input.thermostat.current.state.reported.temperature < $variable.coolingThresholdUnoccupied) || ($input.thermostat.current.state.reported.roomOccupancy && $input.thermostat.current.state.reported.temperature < $variable.coolingThresholdOccupied) ",
+                            "actions": [],
+                            "nextState": "standby"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "setCoolingInShadow",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "'$aws/things/012370770486CB5F01/shadow/update'",
+                                        "payload": {
+                                            "contentExpression": "'{\"state\":{\"desired\":{\"hvacStatus\":\"COOLING\"}}}'",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "heating",
+                "onInput": {
+                    "events": [],
+                    "transitionEvents": [
+                        {
+                            "eventName": "stopHeating",
+                            "condition": "(!$input.thermostat.current.state.reported.roomOccupancy && $input.thermostat.current.state.reported.temperature > $variable.heatingThresholdUnoccupied) || ($input.thermostat.current.state.reported.roomOccupancy && $input.thermostat.current.state.reported.temperature > $variable.heatingThresholdOccupied) ",
+                            "actions": [],
+                            "nextState": "standby"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "setHeatingInShadow",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "'$aws/things/012370770486CB5F01/shadow/update'",
+                                        "payload": {
+                                            "contentExpression": "'{\"state\":{\"desired\":{\"hvacStatus\":\"HEATING\"}}}'",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            }
+        ],
+        "initialStateName": "standby"
+    },
+    "detectorModelName": "hvacApplication",
+    "detectorModelDescription": "cloud application to manage HVAC state",
+    "evaluationMethod": "BATCH"
+}
