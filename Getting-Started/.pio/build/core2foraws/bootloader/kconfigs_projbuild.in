@@ -1,0 +1,3 @@
+source "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/bootloader/Kconfig.projbuild"
+source "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/esptool_py/Kconfig.projbuild"
+source "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/partition_table/Kconfig.projbuild"

@@ -1,0 +1,5 @@
+source "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/efuse/Kconfig"
+source "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/esp32/Kconfig"
+source "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/esp_common/Kconfig"
+source "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/log/Kconfig"
+source "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/spi_flash/Kconfig"

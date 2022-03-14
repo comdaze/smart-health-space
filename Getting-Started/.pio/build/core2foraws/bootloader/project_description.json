@@ -1,0 +1,20 @@
+{
+    "project_name":       "bootloader",
+    "project_path":       "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/bootloader/subproject",
+    "build_dir":          "/Users/zhihay/workspace/smart-health-space/Getting-Started/.pio/build/core2foraws/bootloader",
+    "config_file":        "/Users/zhihay/workspace/smart-health-space/Getting-Started/sdkconfig",
+    "config_defaults":    "",
+    "app_elf":            "bootloader.elf",
+    "app_bin":            "bootloader.bin",
+    "git_revision":       "3.40200.210118",
+    "target":             "esp32",
+    "phy_data_partition": "",
+    "monitor_baud" :      "115200",
+    "monitor_toolprefix": "xtensa-esp32-elf-",
+    "config_environment" : {
+        "COMPONENT_KCONFIGS" : "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/efuse/Kconfig;/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/esp32/Kconfig;/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/esp_common/Kconfig;/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/log/Kconfig;/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/spi_flash/Kconfig",
+        "COMPONENT_KCONFIGS_PROJBUILD" : "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/bootloader/Kconfig.projbuild;/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/esptool_py/Kconfig.projbuild;/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/partition_table/Kconfig.projbuild"
+    },
+    "build_components" : [ "bootloader", "bootloader_support", "efuse", "esp32", "esp_common", "esp_rom", "esptool_py", "log", "main", "micro-ecc", "partition_table", "soc", "spi_flash", "xtensa", "" ],
+    "build_component_paths" : [ "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/bootloader", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/bootloader_support", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/efuse", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/esp32", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/esp_common", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/esp_rom", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/esptool_py", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/log", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/bootloader/subproject/main", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/bootloader/subproject/components/micro-ecc", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/partition_table", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/soc", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/spi_flash", "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/xtensa", "" ]
+}
