@@ -339,10 +339,9 @@ void aws_iot_task(void *param) {
         }
 
         // START get sensor readings
-        // sample temperature, convert to fahrenheit
         MPU6886_GetTempData(&temperature);
         //temperature = (temperature * 1.8)  + 32 - 50;
-        temperature = temperature - 23;
+        temperature = temperature - 20;
 
 
         // sample from soundBuffer (latest reading from microphone)

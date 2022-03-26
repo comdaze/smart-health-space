@@ -3,7 +3,7 @@
     "state": {
       "reported": {
         "sound": 10,
-        "temperature": 35,
+        "temperature": 22,
         "roomOccupancy": false,
         "hvacStatus": "HEATING"
       }

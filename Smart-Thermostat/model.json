@@ -28,26 +28,26 @@
                             "actions": [
                                 {
                                     "setVariable": {
-                                        "variableName": "heatingThresholdUnoccupied",
-                                        "value": "60"
+                                        "variableName": "heatingThresholdOccupied",
+                                        "value": "20"
                                     }
                                 },
                                 {
                                     "setVariable": {
-                                        "variableName": "heatingThresholdOccupied",
-                                        "value": "68"
+                                        "variableName": "heatingThresholdUnoccupied",
+                                        "value": "17"
                                     }
                                 },
                                 {
                                     "setVariable": {
                                         "variableName": "coolingThresholdOccupied",
-                                        "value": "72"
+                                        "value": "21"
                                     }
                                 },
                                 {
                                     "setVariable": {
                                         "variableName": "coolingThresholdUnoccupied",
-                                        "value": "80"
+                                        "value": "23"
                                     }
                                 }
                             ]
@@ -96,7 +96,7 @@
                                     "iotTopicPublish": {
                                         "mqttTopic": "'$aws/things/012370770486CB5F01/shadow/update'",
                                         "payload": {
-                                            "contentExpression": "'{\"state\":{\"desired\":{\"hvacStatus\":\"COOLING\"}}}'",
+                                            "contentExpression": "'{\"state\":{\"desired\":{\"hvacStatus\":\"COOLING\", \"SettingTemperature\": 15}}}'",
                                             "type": "JSON"
                                         }
                                     }
@@ -132,7 +132,7 @@
                                     "iotTopicPublish": {
                                         "mqttTopic": "'$aws/things/012370770486CB5F01/shadow/update'",
                                         "payload": {
-                                            "contentExpression": "'{\"state\":{\"desired\":{\"hvacStatus\":\"HEATING\"}}}'",
+                                            "contentExpression": "'{\"state\":{\"desired\":{\"hvacStatus\":\"HEATING\", \"SettingTemperature\": 30}}}'",
                                             "type": "JSON"
                                         }
                                     }
@@ -148,7 +148,9 @@
         ],
         "initialStateName": "standby"
     },
-    "detectorModelName": "hvacApplication",
     "detectorModelDescription": "cloud application to manage HVAC state",
-    "evaluationMethod": "BATCH"
+    "detectorModelName": "hvacApplication",
+    "evaluationMethod": "BATCH",
+    "key": null,
+    "roleArn": "arn:aws:iam::383570952416:role/service-role/edukit-iotevents"
 }
