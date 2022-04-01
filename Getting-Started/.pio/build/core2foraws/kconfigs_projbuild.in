@@ -1,6 +1,0 @@
-source "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/app_update/Kconfig.projbuild"
-source "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/bootloader/Kconfig.projbuild"
-source "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/esptool_py/Kconfig.projbuild"
-source "/Users/zhihay/.platformio/packages/framework-espidf@3.40200.210118/components/partition_table/Kconfig.projbuild"
-source "/Users/zhihay/workspace/smart-health-space/Getting-Started/components/app_wifi/Kconfig.projbuild"
-source "/Users/zhihay/workspace/smart-health-space/Getting-Started/components/esp_rainmaker/Kconfig.projbuild"
