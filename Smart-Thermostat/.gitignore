@@ -1,4 +1,5 @@
 .pio
-./pio/*
+.pio/*
 .vscode
-.vscode/*
+.vscode/settings.json
+.vscode/extensions.json
