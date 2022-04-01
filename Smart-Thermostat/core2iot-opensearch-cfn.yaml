@@ -1,0 +1,73 @@
+Transform: AWS::SecretsManager-2020-07-23
+
+Description: "Sample Module Team template"
+
+Resources:
+
+
+#Admin password for OpenSearch Instance
+  OpenSearchPassword:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      GenerateSecretString:
+        SecretStringTemplate: '{"username": "admin"}'
+        GenerateStringKey: password
+        PasswordLength: 16
+        ExcludeCharacters: "\"@/\\"
+
+#OpenSearch Instance
+  OpenSearchInstance:
+    Type: AWS::OpenSearchService::Domain
+    Properties:
+      DomainName: "hvac"
+      EngineVersion: 'OpenSearch_1.1'
+      ClusterConfig:
+        InstanceCount: 1
+        InstanceType: t3.medium.search
+      AccessPolicies:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              AWS: '*'
+            Action: 'es:*'
+            Resource: !Sub "arn:aws:es:${AWS::Region}:${AWS::AccountId}:domain/hvac/*"
+      AdvancedSecurityOptions:
+        Enabled: true
+        InternalUserDatabaseEnabled: true
+        MasterUserOptions:
+          MasterUserName: !Sub "{{resolve:secretsmanager:${OpenSearchPassword}::username}}"
+          MasterUserPassword: !Sub "{{resolve:secretsmanager:${OpenSearchPassword}::password}}"
+      NodeToNodeEncryptionOptions:
+        Enabled: true
+      EncryptionAtRestOptions:
+        Enabled: true
+      DomainEndpointOptions:
+        EnforceHTTPS: true
+      EBSOptions:
+        EBSEnabled: true
+        VolumeSize: 10
+        VolumeType: gp2
+
+#Outputs will go here
+Outputs:
+
+  OpenSearchSecretsManagerReference:
+    Description: OpenSearch credentials are stored in secrets manager
+    Value: !Select [6, !Split [":", !Ref OpenSearchPassword ]]
+    
+  OpenSearchServiceEndpoint:
+    Description: 'OpenSearch Service endpoint'
+    Value:
+      Fn::Join:
+        - ''
+        - - 'https://'
+          - !GetAtt 'OpenSearchInstance.DomainEndpoint'
+  OpenSearchServiceDashboardURL:
+    Description: 'OpenSearch Dashboards URL'
+    Value:
+      Fn::Join:
+        - ''
+        - - 'https://'
+          - !GetAtt 'OpenSearchInstance.DomainEndpoint'
+          - '/_dashboards'
