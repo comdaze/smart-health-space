@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3.9
 
 # Copyright 2018 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
