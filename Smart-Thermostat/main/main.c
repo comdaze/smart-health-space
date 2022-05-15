@@ -1,9 +1,9 @@
 /*
- * AWS IoT EduKit - Core2 for AWS IoT EduKit
- * Smart Thermostat v1.3.1
+ * Smart Health Space (based on AWS IoT EduKit - Core2 for AWS IoT EduKit)
+  * Smart Thermostat v1.3.1
  * main.c
  * 
- * Copyright 2010-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * Additions Copyright 2016 Espressif Systems (Shanghai) PTE LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -17,6 +17,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
+
 /**
  * @file main.c
  * @brief simple MQTT publish, subscribe, and device shadows for use with AWS IoT EduKit reference hardware.

@@ -1,8 +1,8 @@
 /*
- * Foolproof_Temperature_Checker_R5 (based on AWS IoT EduKit - Core2 for AWS IoT EduKit)
+ * Smart Health Space (based on AWS IoT EduKit - Core2 for AWS IoT EduKit)
  * main.c
  * 
- * Copyright 2010-2015 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2010-2022 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  * Additions Copyright 2016 Espressif Systems (Shanghai) PTE LTD
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
@@ -317,16 +317,23 @@ void readInputTask(){
         if (pir_curr == true){
             pir_detected = true;
             ESP_LOGI(TAG, "PIR sensor detected!"); 
-            ESP_LOGI(TAG, "setting side LEDs to red");
+            sprintf(temp_str_awsPIR, "Detected: true");
+            ui_awsPIR_lab(temp_str_awsPIR);
+            ESP_LOGI(TAG, "set side LEDs to red");
             Core2ForAWS_Sk6812_SetSideColor(SK6812_SIDE_LEFT, 0xFF0000);
             Core2ForAWS_Sk6812_SetSideColor(SK6812_SIDE_RIGHT, 0xFF0000);
             Core2ForAWS_Sk6812_Show();
 
             pir_count++;   
             count_fr_aws = pir_count;
+            ESP_LOGI(TAG, "Delta - count_fr_aws number changed to %d", count_fr_aws);
+            sprintf(temp_str_awsCount, "Counter: %d", count_fr_aws);
+            ui_awsCount_lab(temp_str_awsCount);
             ESP_LOGI(TAG, "PIR sensor counted!"); 
         } else {
             pir_detected = false;
+            sprintf(temp_str_awsPIR, "Detected: false");
+            ui_awsPIR_lab(temp_str_awsPIR);
             ESP_LOGI(TAG, "clearing side LEDs");
             Core2ForAWS_Sk6812_Clear();
             Core2ForAWS_Sk6812_Show();
