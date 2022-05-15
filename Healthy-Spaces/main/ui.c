@@ -1,8 +1,8 @@
 /*
- * Foolproof_Temperature_Checker_R5 (based on AWS IoT EduKit - Core2 for AWS IoT EduKit)
+ * Smart Health Space (based on AWS IoT EduKit - Core2 for AWS IoT EduKit)
  * ui.c
  * 
- * Copyright (C) 2020 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
+ * Copyright (C) 2022 Amazon.com, Inc. or its affiliates.  All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in

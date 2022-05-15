@@ -83,6 +83,7 @@ bool pir_detected  = false;
 
 uint16_t count_fr_aws = 0;
 
+char *iot_topic = "detect/mask";
 
 // *** iot callback handler ***********************************************************************
 void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, uint16_t topicNameLen,
@@ -158,13 +159,91 @@ void awsPIR_Callback(const char *pJsonString, uint32_t JsonStringDataLen, jsonSt
     }
 }
 
+
 // *** aws iot task ***********************************************************************
+
 void aws_iot_task(void *param) {
     IoT_Error_t rc = FAILURE;
 
     char JsonDocumentBuffer[MAX_LENGTH_OF_UPDATE_JSON_BUFFER];
     size_t sizeOfJsonDocumentBuffer = sizeof(JsonDocumentBuffer) / sizeof(JsonDocumentBuffer[0]);
     
+
+    ESP_LOGI(TAG, "AWS IoT SDK Version %d.%d.%d-%s", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_TAG);
+
+    // initialize the mqtt client
+    AWS_IoT_Client iotCoreClient;
+
+	IoT_Client_Init_Params mqttInitParams = iotClientInitParamsDefault;
+    mqttInitParams.enableAutoReconnect = false; // We enable this later below
+	mqttInitParams.pHostURL = HostAddress;
+	mqttInitParams.port = port;
+	mqttInitParams.pRootCALocation = (const char *)aws_root_ca_pem_start;
+	mqttInitParams.pDeviceCertLocation = "#";
+	mqttInitParams.pDevicePrivateKeyLocation = "#0";
+	mqttInitParams.mqttCommandTimeout_ms = 20000;
+	mqttInitParams.tlsHandshakeTimeout_ms = 5000;
+	mqttInitParams.isSSLHostnameVerify = true;
+	mqttInitParams.disconnectHandler = disconnect_callback_handler;
+	mqttInitParams.disconnectHandlerData = NULL;
+
+
+    #define CLIENT_ID_LEN (ATCA_SERIAL_NUM_SIZE * 2)
+    char *client_id = malloc(CLIENT_ID_LEN + 1);
+    ATCA_STATUS ret = Atecc608_GetSerialString(client_id);
+    if (ret != ATCA_SUCCESS){
+        ESP_LOGE(TAG, "Failed to get device serial from secure element. Error: %i", ret);
+        abort();
+    }
+
+    ui_textarea_add("\nDevice client Id:\n>> %s <<\n", client_id, CLIENT_ID_LEN);
+
+    /* Wait for WiFI to show as connected */
+    xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
+                        false, true, portMAX_DELAY);
+
+    
+    
+    ESP_LOGI(TAG, "MQTT Init");
+
+	IoT_Client_Connect_Params connectParams = iotClientConnectParamsDefault;
+	connectParams.keepAliveIntervalInSec = 600;
+	connectParams.isCleanSession = true;
+	connectParams.MQTTVersion = MQTT_3_1_1;
+	connectParams.pClientID = AWS_IOT_MQTT_CLIENT_ID;
+	connectParams.clientIDLen = (uint16_t) strlen(AWS_IOT_MQTT_CLIENT_ID);
+	connectParams.isWillMsgPresent = false;
+
+	rc = aws_iot_mqtt_init(&iotCoreClient, &mqttInitParams);
+	if(SUCCESS != rc) {
+		IOT_ERROR("aws_iot_mqtt_init returned error : %d ", rc);
+		abort();
+	}
+
+
+	IOT_INFO("Connecting...");
+	rc = aws_iot_mqtt_connect(&iotCoreClient, &connectParams);
+	if(SUCCESS != rc) {
+		IOT_ERROR("Error(%d) connecting to %s:%d", rc, mqttInitParams.pHostURL, mqttInitParams.port);
+		abort();
+	}
+
+	rc = aws_iot_mqtt_autoreconnect_set_status(&iotCoreClient, true);
+	if(SUCCESS != rc) {
+		IOT_ERROR("Unable to set Auto Reconnect to true - %d", rc);
+		abort();
+	}
+
+	IOT_INFO("Subscribing...");
+	rc = aws_iot_mqtt_subscribe(&iotCoreClient, iot_topic, 11, QOS0, iot_subscribe_callback_handler, NULL);
+	if(SUCCESS != rc) {
+		IOT_ERROR("Error subscribing : %d ", rc);
+		abort();
+	}
+
+
+    // initialize the device shadow
+
     // *** json variable ***********************************************************************
 
     jsonStruct_t testHandler_pir_detector;
@@ -182,11 +261,7 @@ void aws_iot_task(void *param) {
     awsCount.type = SHADOW_JSON_UINT16;
     awsCount.dataLength = sizeof(uint16_t);
 
-    ESP_LOGI(TAG, "AWS IoT SDK Version %d.%d.%d-%s", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_TAG);
-
-    // initialize the mqtt client
-    AWS_IoT_Client iotCoreClient;
-
+   // *** Shadow init Parameters Definition***********************************************************************
     ShadowInitParameters_t sp = ShadowInitParametersDefault;
     sp.pHost = HostAddress;
     sp.port = port;
@@ -196,21 +271,8 @@ void aws_iot_task(void *param) {
     sp.pRootCA = (const char *)aws_root_ca_pem_start;
     sp.pClientCRT = "#";
     sp.pClientKey = "#0";
+
     
-    #define CLIENT_ID_LEN (ATCA_SERIAL_NUM_SIZE * 2)
-    char *client_id = malloc(CLIENT_ID_LEN + 1);
-    ATCA_STATUS ret = Atecc608_GetSerialString(client_id);
-    if (ret != ATCA_SUCCESS){
-        ESP_LOGE(TAG, "Failed to get device serial from secure element. Error: %i", ret);
-        abort();
-    }
-
-    ui_textarea_add("\nDevice client Id:\n>> %s <<\n", client_id, CLIENT_ID_LEN);
-
-    /* Wait for WiFI to show as connected */
-    xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
-                        false, true, portMAX_DELAY);
-
     ESP_LOGI(TAG, "Shadow Init");
 
     rc = aws_iot_shadow_init(&iotCoreClient, &sp);
@@ -265,12 +327,13 @@ void aws_iot_task(void *param) {
 
             ESP_LOGI(TAG, "*****************************************************************************************");
             // *** json variable ***********************************************************************
-            ESP_LOGI(TAG, "On Device: pir_detector %s", pir_detected ? "true" : "false");
+            //ESP_LOGI(TAG, "On Device: pir_detector %s", pir_detected ? "true" : "false");
            
-            ESP_LOGI(TAG, "On Device: count_fr_aws    \t%d", count_fr_aws);
+            //ESP_LOGI(TAG, "On Device: count_fr_aws    \t%d", count_fr_aws);
             sprintf(temp_str, "DETECTING...");     
             ui_textlabel_add(temp_str);
             rc = aws_iot_shadow_init_json_document(JsonDocumentBuffer, sizeOfJsonDocumentBuffer);
+            
             if(SUCCESS == rc) {
                rc = aws_iot_shadow_add_reported(JsonDocumentBuffer, sizeOfJsonDocumentBuffer, 2,
                                                 &testHandler_pir_detector, &awsCount);
@@ -284,6 +347,8 @@ void aws_iot_task(void *param) {
                     }
                 }
             }
+            // Subscribe a iot_topic
+            aws_iot_mqtt_subscribe(&iotCoreClient, iot_topic, 11, QOS0, iot_subscribe_callback_handler, NULL);
 
             ESP_LOGI(TAG, "*****************************************************************************************");
             ESP_LOGI(TAG, "Stack remaining for task '%s' is %d bytes", pcTaskGetTaskName(NULL), uxTaskGetStackHighWaterMark(NULL));
@@ -316,10 +381,10 @@ void readInputTask(){
         pir_curr = Core2ForAWS_Port_Read(GPIO_PIR);
         if (pir_curr == true){
             pir_detected = true;
-            ESP_LOGI(TAG, "PIR sensor detected!"); 
+            //ESP_LOGI(TAG, "PIR sensor detected!"); 
             sprintf(temp_str_awsPIR, "Detected: true");
             ui_awsPIR_lab(temp_str_awsPIR);
-            ESP_LOGI(TAG, "set side LEDs to red");
+            //ESP_LOGI(TAG, "set side LEDs to red");
             Core2ForAWS_Sk6812_SetSideColor(SK6812_SIDE_LEFT, 0xFF0000);
             Core2ForAWS_Sk6812_SetSideColor(SK6812_SIDE_RIGHT, 0xFF0000);
             Core2ForAWS_Sk6812_Show();
@@ -329,12 +394,12 @@ void readInputTask(){
             ESP_LOGI(TAG, "Delta - count_fr_aws number changed to %d", count_fr_aws);
             sprintf(temp_str_awsCount, "Counter: %d", count_fr_aws);
             ui_awsCount_lab(temp_str_awsCount);
-            ESP_LOGI(TAG, "PIR sensor counted!"); 
+            //ESP_LOGI(TAG, "PIR sensor counted!"); 
         } else {
             pir_detected = false;
             sprintf(temp_str_awsPIR, "Detected: false");
             ui_awsPIR_lab(temp_str_awsPIR);
-            ESP_LOGI(TAG, "clearing side LEDs");
+            //ESP_LOGI(TAG, "clearing side LEDs");
             Core2ForAWS_Sk6812_Clear();
             Core2ForAWS_Sk6812_Show();
             }
@@ -352,7 +417,7 @@ void app_main()
     ui_init();
     initialise_wifi();
     xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", 4096*2, NULL, 5, NULL, 1);
-
+   
     esp_err_t err_GPIO_PIR = Core2ForAWS_Port_PinMode(GPIO_PIR, INPUT);
     if(err_GPIO_PIR == ESP_OK){
         xTaskCreatePinnedToCore(readInputTask, "read_pin", 1024*4, NULL, 1, NULL, 1);
