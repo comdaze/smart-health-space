@@ -1,0 +1,7 @@
+{
+    "person0": {
+        "bodyPart": "face",
+        "confidence": 99.8,
+        "maskDetection": false
+    }
+}

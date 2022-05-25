@@ -1,0 +1,83 @@
+{
+    "detectorModelDefinition": {
+        "states": [
+            {
+                "stateName": "Init",
+                "onInput": {
+                    "events": [],
+                    "transitionEvents": [
+                        {
+                            "eventName": "PIR_Detected",
+                            "condition": "$input.pir_input.state.reported.pir_detected == true",
+                            "actions": [],
+                            "nextState": "Detect_Mask_State"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": []
+                },
+                "onExit": {
+                    "events": []
+                }
+            },
+            {
+                "stateName": "Detect_Mask_State",
+                "onInput": {
+                    "events": [],
+                    "transitionEvents": [
+                        {
+                            "eventName": "backInit",
+                            "condition": "$input.pir_input.state.reported.pir_detected == false",
+                            "actions": [],
+                            "nextState": "Init"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "send_message_mask_true",
+                            "condition": "$input.MaskDetection_input.person0.maskDetection == true",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "'detect/mask'",
+                                        "payload": {
+                                            "contentExpression": "'{\"detect_mask\": true}'",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "eventName": "send_massage_mask_false",
+                            "condition": "$input.MaskDetection_input.person0.maskDetection == false",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "'detect/mask'",
+                                        "payload": {
+                                            "contentExpression": "'{\"detect_mask\": false}'",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                "onExit": {
+                    "events": []
+                }
+            }
+        ],
+        "initialStateName": "Init"
+    },
+    "detectorModelDescription": null,
+    "detectorModelName": "maskDetectModel",
+    "evaluationMethod": "BATCH",
+    "key": null,
+    "roleArn": "arn:aws:iam::383570952416:role/service-role/AWS_IoTEvents_HelloWorld_ActionRole"
+}
