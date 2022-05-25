@@ -85,6 +85,8 @@ uint16_t count_fr_aws = 0;
 
 char *iot_topic = "detect/mask";
 
+
+
 // *** iot callback handler ***********************************************************************
 void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, uint16_t topicNameLen,
                                     IoT_Publish_Message_Params *params, void *pData) {
@@ -234,13 +236,14 @@ void aws_iot_task(void *param) {
 		abort();
 	}
 
-	IOT_INFO("Subscribing...");
+	/*
+    IOT_INFO("Subscribing...");
 	rc = aws_iot_mqtt_subscribe(&iotCoreClient, iot_topic, 11, QOS0, iot_subscribe_callback_handler, NULL);
 	if(SUCCESS != rc) {
 		IOT_ERROR("Error subscribing : %d ", rc);
 		abort();
 	}
-
+*/
 
     // initialize the device shadow
 
@@ -344,6 +347,7 @@ void aws_iot_task(void *param) {
                         rc = aws_iot_shadow_update(&iotCoreClient, client_id, JsonDocumentBuffer,
                                                 ShadowUpdateStatusCallback, NULL, 6, true);
                         shadowUpdateInProgress = true;
+                        
                     }
                 }
             }
@@ -391,7 +395,7 @@ void readInputTask(){
 
             pir_count++;   
             count_fr_aws = pir_count;
-            ESP_LOGI(TAG, "Delta - count_fr_aws number changed to %d", count_fr_aws);
+            //ESP_LOGI(TAG, "Delta - count_fr_aws number changed to %d", count_fr_aws);
             sprintf(temp_str_awsCount, "Counter: %d", count_fr_aws);
             ui_awsCount_lab(temp_str_awsCount);
             //ESP_LOGI(TAG, "PIR sensor counted!"); 
