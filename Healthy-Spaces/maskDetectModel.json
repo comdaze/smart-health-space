@@ -44,7 +44,7 @@
                                     "iotTopicPublish": {
                                         "mqttTopic": "'detect/mask'",
                                         "payload": {
-                                            "contentExpression": "'{\"detect_mask\": true}'",
+                                            "contentExpression": "'{\"detect_mask\": 1}'",
                                             "type": "JSON"
                                         }
                                     }
@@ -59,7 +59,7 @@
                                     "iotTopicPublish": {
                                         "mqttTopic": "'detect/mask'",
                                         "payload": {
-                                            "contentExpression": "'{\"detect_mask\": false}'",
+                                            "contentExpression": "'{\"detect_mask\": 0}'",
                                             "type": "JSON"
                                         }
                                     }
