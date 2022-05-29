@@ -52,6 +52,7 @@
 #include "ui.h"
 #include "driver/uart.h"
 #include "driver/gpio.h"
+#include "core_json.h"
 
 static const char *TAG = "MAIN";
 
@@ -80,18 +81,72 @@ char temp_str_awsPIR[200];
 
 
 bool pir_detected  = false;
-
+uint32_t mask_detection = 0U;
 uint16_t count_fr_aws = 0;
 
 char *iot_topic = "detect/mask";
-
-
 
 // *** iot callback handler ***********************************************************************
 void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, uint16_t topicNameLen,
                                     IoT_Publish_Message_Params *params, void *pData) {
     ESP_LOGI(TAG, "Subscribe callback");
-    ESP_LOGI(TAG, "%.*s\t%.*s", topicNameLen, topicName, (int) params->payloadLen, (char *)params->payload);
+    //ESP_LOGI(TAG, "%.*s\t%.*s", topicNameLen, topicName, (int) params->payloadLen, (char *)params->payload);
+    JSONStatus_t result;
+    char * outValue = NULL;
+    uint32_t outValueLength = 0U;
+    result = JSON_Validate( (char *)params->payload, (int)params->payloadLen);
+
+    /* The payload will look similar to this:
+    {"detect_mask": 0}
+    */
+
+    if( result == JSONSuccess )
+    {
+        /* Then we start to get the version value by JSON keyword "version". */
+        result = JSON_Search( (char *)params->payload, 
+                            (int)params->payloadLen,
+                            "detect_mask",
+                              sizeof( "detect_mask") - 1,
+                              &outValue ,
+                              ( size_t * ) &outValueLength );
+    }
+    else
+    {
+        ESP_LOGI(TAG, "The json document is invalid!!" );
+    }
+    if( result == JSONSuccess )
+    {
+        // The pointer "outValue" will point to a location in the payload.
+        char save = outValue[ outValueLength ];
+
+    // After saving the character, set it to a null byte for printing.
+        outValue[ outValueLength ] = '\0';
+    // "detect_mask: " will be printed.
+        ESP_LOGI(TAG, "detect_mask: %s\n", outValue);
+        mask_detection = ( uint32_t ) strtoul( outValue, NULL, 10 );
+
+    // Restore the original character.
+        outValue[ outValueLength ] = save;       
+    }
+    else
+    {
+        ESP_LOGI(TAG, "No detect_mask in json document!!" );
+
+    }
+
+    if ( mask_detection == 0) {
+            //ESP_LOGI(TAG, "set side LEDs to red");
+            Core2ForAWS_Sk6812_SetSideColor(SK6812_SIDE_LEFT, 0xFF0000);
+            Core2ForAWS_Sk6812_SetSideColor(SK6812_SIDE_RIGHT, 0xFF0000);
+            Core2ForAWS_Sk6812_Show();
+            Core2ForAWS_Motor_SetStrength(20);
+    
+        }else{
+            //ESP_LOGI(TAG, "clearing side LEDs");
+            Core2ForAWS_Sk6812_Clear();
+            Core2ForAWS_Sk6812_Show();
+        }
+    
 }
 
 void disconnect_callback_handler(AWS_IoT_Client *pClient, void *data) {
@@ -236,14 +291,6 @@ void aws_iot_task(void *param) {
 		abort();
 	}
 
-	/*
-    IOT_INFO("Subscribing...");
-	rc = aws_iot_mqtt_subscribe(&iotCoreClient, iot_topic, 11, QOS0, iot_subscribe_callback_handler, NULL);
-	if(SUCCESS != rc) {
-		IOT_ERROR("Error subscribing : %d ", rc);
-		abort();
-	}
-*/
 
     // initialize the device shadow
 
@@ -351,8 +398,8 @@ void aws_iot_task(void *param) {
                     }
                 }
             }
-            // Subscribe a iot_topic
-            aws_iot_mqtt_subscribe(&iotCoreClient, iot_topic, 11, QOS0, iot_subscribe_callback_handler, NULL);
+            // Subscribe a iot topic : "detect/mask"
+            aws_iot_mqtt_subscribe(&iotCoreClient, "detect/mask", 11, QOS0, iot_subscribe_callback_handler, NULL);
 
             ESP_LOGI(TAG, "*****************************************************************************************");
             ESP_LOGI(TAG, "Stack remaining for task '%s' is %d bytes", pcTaskGetTaskName(NULL), uxTaskGetStackHighWaterMark(NULL));
@@ -389,9 +436,9 @@ void readInputTask(){
             sprintf(temp_str_awsPIR, "Detected: true");
             ui_awsPIR_lab(temp_str_awsPIR);
             //ESP_LOGI(TAG, "set side LEDs to red");
-            Core2ForAWS_Sk6812_SetSideColor(SK6812_SIDE_LEFT, 0xFF0000);
-            Core2ForAWS_Sk6812_SetSideColor(SK6812_SIDE_RIGHT, 0xFF0000);
-            Core2ForAWS_Sk6812_Show();
+            //Core2ForAWS_Sk6812_SetSideColor(SK6812_SIDE_LEFT, 0xFF0000);
+            //Core2ForAWS_Sk6812_SetSideColor(SK6812_SIDE_RIGHT, 0xFF0000);
+            //Core2ForAWS_Sk6812_Show();
 
             pir_count++;   
             count_fr_aws = pir_count;
@@ -406,6 +453,7 @@ void readInputTask(){
             //ESP_LOGI(TAG, "clearing side LEDs");
             Core2ForAWS_Sk6812_Clear();
             Core2ForAWS_Sk6812_Show();
+            Core2ForAWS_Motor_SetStrength(0);
             }
         vTaskDelay(pdMS_TO_TICKS(2000));
     }
@@ -420,12 +468,13 @@ void app_main()
 
     ui_init();
     initialise_wifi();
+   
     xTaskCreatePinnedToCore(&aws_iot_task, "aws_iot_task", 4096*2, NULL, 5, NULL, 1);
    
     esp_err_t err_GPIO_PIR = Core2ForAWS_Port_PinMode(GPIO_PIR, INPUT);
     if(err_GPIO_PIR == ESP_OK){
         xTaskCreatePinnedToCore(readInputTask, "read_pin", 1024*4, NULL, 1, NULL, 1);
     }
-  
+
     vTaskSuspend(led_bar_blink_handle);
 }
