@@ -37,14 +37,14 @@
                 "onEnter": {
                     "events": [
                         {
-                            "eventName": "send_message_mask_true",
-                            "condition": "$input.MaskDetection_input.person0.maskDetection == true",
+                            "eventName": "SomeonePersonNoMask_true",
+                            "condition": "$input.MaskDetection_input.SomeonePersonNoMask == true",
                             "actions": [
                                 {
                                     "iotTopicPublish": {
                                         "mqttTopic": "'detect/mask'",
                                         "payload": {
-                                            "contentExpression": "'{\"detect_mask\": 1}'",
+                                            "contentExpression": "'{\"detect_mask\": 0}'",
                                             "type": "JSON"
                                         }
                                     }
@@ -52,14 +52,14 @@
                             ]
                         },
                         {
-                            "eventName": "send_massage_mask_false",
-                            "condition": "$input.MaskDetection_input.person0.maskDetection == false",
+                            "eventName": "SomeonePersonNoMask_false",
+                            "condition": "$input.MaskDetection_input.SomeonePersonNoMask == false",
                             "actions": [
                                 {
                                     "iotTopicPublish": {
                                         "mqttTopic": "'detect/mask'",
                                         "payload": {
-                                            "contentExpression": "'{\"detect_mask\": 0}'",
+                                            "contentExpression": "'{\"detect_mask\": 1}'",
                                             "type": "JSON"
                                         }
                                     }
