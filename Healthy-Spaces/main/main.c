@@ -50,7 +50,6 @@
 #include "wifi.h"
 #include "fft.h"
 #include "ui.h"
-#include "driver/uart.h"
 #include "driver/gpio.h"
 #include "core_json.h"
 
