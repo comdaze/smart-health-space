@@ -1,6 +1,4 @@
 {
-    "SomeonePersonNoMask": true,
-    "NoMaskPersonId": [
-        0
-    ]
+    "AllPersonWithMask": true,
+    "NoMaskPersonId": []
 }
