@@ -15,7 +15,20 @@
                     ]
                 },
                 "onEnter": {
-                    "events": []
+                    "events": [
+                        {
+                            "eventName": "setVar",
+                            "condition": "true",
+                            "actions": [
+                                {
+                                    "setVariable": {
+                                        "variableName": "pir_state",
+                                        "value": "0"
+                                    }
+                                }
+                            ]
+                        }
+                    ]
                 },
                 "onExit": {
                     "events": []
@@ -24,18 +37,22 @@
             {
                 "stateName": "Detect_Mask_State",
                 "onInput": {
-                    "events": [],
-                    "transitionEvents": [
-                        {
-                            "eventName": "backInit",
-                            "condition": "$input.pir_input.state.reported.pir_detected == false",
-                            "actions": [],
-                            "nextState": "Init"
-                        }
-                    ]
-                },
-                "onEnter": {
                     "events": [
+                        {
+                            "eventName": "SomeonePersonNoMask_false",
+                            "condition": "$input.MaskDetection_input.SomeonePersonNoMask == false",
+                            "actions": [
+                                {
+                                    "iotTopicPublish": {
+                                        "mqttTopic": "'detect/mask'",
+                                        "payload": {
+                                            "contentExpression": "'{\"detect_mask\": 1}'",
+                                            "type": "JSON"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
                         {
                             "eventName": "SomeonePersonNoMask_true",
                             "condition": "$input.MaskDetection_input.SomeonePersonNoMask == true",
@@ -50,18 +67,27 @@
                                     }
                                 }
                             ]
-                        },
+                        }
+                    ],
+                    "transitionEvents": [
                         {
-                            "eventName": "SomeonePersonNoMask_false",
-                            "condition": "$input.MaskDetection_input.SomeonePersonNoMask == false",
+                            "eventName": "backInit",
+                            "condition": "$input.pir_input.state.reported.pir_detected == false",
+                            "actions": [],
+                            "nextState": "Init"
+                        }
+                    ]
+                },
+                "onEnter": {
+                    "events": [
+                        {
+                            "eventName": "pir_state_change",
+                            "condition": "true",
                             "actions": [
                                 {
-                                    "iotTopicPublish": {
-                                        "mqttTopic": "'detect/mask'",
-                                        "payload": {
-                                            "contentExpression": "'{\"detect_mask\": 1}'",
-                                            "type": "JSON"
-                                        }
+                                    "setVariable": {
+                                        "variableName": "pir_state",
+                                        "value": "$variable.pir_state + 1"
                                     }
                                 }
                             ]
