@@ -14,3 +14,6 @@ This project is used in the [AWS IoT EduKit — Cloud Connected Blink](http://sm
 
 ### Smart Thermostat
 This project is used in the [AWS IoT EduKit — Smart Thermostat](http://smart-health-space.s3-website.cn-north-1.amazonaws.com.cn/cn//smart-thermostat.html) tutorials. It is a demonstration that uses AWS IoT device shadow feature to provide an example of a smart thermostat and how to update device states through the device shadow feature. This example uses the [Espressif ported AWS IoT Device SDK for Embedded C](https://github.com/espressif/esp-aws-iot). Please follow the tutorial for usage.
+
+### Healthy Spaces
+This project is used in the [AWS IoT EduKit — Healthy Spaces](http://smart-health-space.s3-website.cn-north-1.amazonaws.com.cn/cn/Healthy-Spaces.html) tutorials. It is a demonstration that uses AWS IoT device shadow feature to provide an example of a smart thermostat and how to update device states through the device shadow feature. This example uses the [Espressif ported AWS IoT Device SDK for Embedded C](https://github.com/espressif/esp-aws-iot). Please follow the tutorial for usage.
