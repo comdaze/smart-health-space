@@ -56,7 +56,7 @@
 static const char *TAG = "MAIN";
 
 #define MAX_LENGTH_OF_UPDATE_JSON_BUFFER 500
-#define GPIO_PIR GPIO_NUM_26
+#define GPIO_PIR GPIO_NUM_36
 
 /* CA Root certificate */
 extern const uint8_t aws_root_ca_pem_start[] asm("_binary_aws_root_ca_pem_start");
