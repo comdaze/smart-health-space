@@ -3,3 +3,5 @@
 .vscode
 .vscode/settings.json
 .vscode/extensions.json
+.DS_Store
+Healthy-Spaces/.DS_Store
