@@ -116,5 +116,5 @@
     "detectorModelName": "maskDetectModel",
     "evaluationMethod": "BATCH",
     "key": null,
-    "roleArn": "arn:aws:iam::383570952416:role/service-role/AWS_IoTEvents_HelloWorld_ActionRole"
+    "roleArn": "arn:aws:iam::<<Account_ID>>:role/service-role/edukit-iotevents"
 }

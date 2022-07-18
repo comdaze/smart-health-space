@@ -58,7 +58,7 @@
                             "actions": [
                                 {
                                     "iotTopicPublish": {
-                                        "mqttTopic": "'$aws/things/012370770486CB5F01/shadow/update'",
+                                        "mqttTopic": "'$aws/things/<<CLIENT_ID>>/shadow/update'",
                                         "payload": {
                                             "contentExpression": "'{\"state\":{\"desired\":{\"hvacStatus\":\"STANDBY\"}}}'",
                                             "type": "JSON"
@@ -94,7 +94,7 @@
                             "actions": [
                                 {
                                     "iotTopicPublish": {
-                                        "mqttTopic": "'$aws/things/012370770486CB5F01/shadow/update'",
+                                        "mqttTopic": "'$aws/things/<<CLIENT_ID>>/shadow/update'",
                                         "payload": {
                                             "contentExpression": "'{\"state\":{\"desired\":{\"hvacStatus\":\"COOLING\", \"SettingTemperature\": 15}}}'",
                                             "type": "JSON"
@@ -130,7 +130,7 @@
                             "actions": [
                                 {
                                     "iotTopicPublish": {
-                                        "mqttTopic": "'$aws/things/012370770486CB5F01/shadow/update'",
+                                        "mqttTopic": "'$aws/things/<<CLIENT_ID>>/shadow/update'",
                                         "payload": {
                                             "contentExpression": "'{\"state\":{\"desired\":{\"hvacStatus\":\"HEATING\", \"SettingTemperature\": 30}}}'",
                                             "type": "JSON"
@@ -152,5 +152,5 @@
     "detectorModelName": "hvacApplication",
     "evaluationMethod": "BATCH",
     "key": null,
-    "roleArn": "arn:aws:iam::383570952416:role/service-role/edukit-iotevents"
+    "roleArn": "arn:aws:iam::<<Account_ID>>:role/service-role/edukit-iotevents"
 }
