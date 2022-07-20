@@ -151,6 +151,5 @@
     "detectorModelDescription": "cloud application to manage HVAC state",
     "detectorModelName": "hvacApplication",
     "evaluationMethod": "BATCH",
-    "key": null,
-    "roleArn": "arn:aws:iam::<<Account_ID>>:role/service-role/edukit-iotevents"
+    "key": null
 }
