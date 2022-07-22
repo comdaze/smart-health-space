@@ -22,19 +22,50 @@
 
 import os
 import time
-
+import argparse
 import boto3
+from botocore.config import Config
+
+parser = argparse.ArgumentParser()
+parser.add_argument("-e", "--endpoint", action="store", required=True, dest="host", help="Your AWS IoT custom endpoint")
+parser.add_argument("-id", "--clientId", action="store", dest="clientId", default="basicPubSub",
+                    help="Targeted client id")
+parser.add_argument("-r", "--region", action="store", required=True, dest="region", default="ap-northeast-1",
+                    help="AWS Region")
+
+args = parser.parse_args()
+IOT_ENDPOINT = args.host
+REGION = args.region
+my_config = Config(
+    region_name = REGION,
+    signature_version = 'v4',
+    retries = {
+        'max_attempts': 10,
+        'mode': 'standard'
+    }
+)
+c_iot = boto3.client('iot', config=my_config)
+c_iot_data = boto3.client('iot-data', endpoint_url='https://{}'.format(IOT_ENDPOINT), config=my_config)
+
+c_iot.update_indexing_configuration(
+    thingIndexingConfiguration={
+        'thingIndexingMode': 'REGISTRY_AND_SHADOW',
+    },
+    thingGroupIndexingConfiguration={
+        'thingGroupIndexingMode': 'ON',
+    }
+)
 
 #IOT_ENDPOINT = os.environ['IOT_ENDPOINT']
-IOT_ENDPOINT= 'a2u3inau7j0faa-ats.iot.ap-northeast-1.amazonaws.com'
+#IOT_ENDPOINT= 'a2u3inau7j0faa-ats.iot.ap-northeast-1.amazonaws.com'
 #######################################################################
 QUERY_STRINGS = [
-    'EduKit_Policy*', 'microchip-tng', '012370770486cb5f01'
+    'EduKit_Policy', 'microchip-tng'
 ]
-THING_NAMES = []
+THING_NAMES = [args.clientId,]
 THING_GROUPS = []
 POLICY_NAMES = [
-    'EduKit_Policy', 'EduKit_Policy*'
+    'EduKit_Policy'
 ]
 #######################################################################
 
@@ -76,8 +107,7 @@ def delete_thing(thing_name):
     r_del_thing = c_iot.delete_thing(thingName=thing_name)
     print("  DELETE THING: {}\n".format(r_del_thing))
 
-c_iot = boto3.client('iot')
-c_iot_data = boto3.client('iot-data', endpoint_url='https://{}'.format(IOT_ENDPOINT))
+
 
 for query_string in QUERY_STRINGS:
     print("query_string: {}".format(query_string))

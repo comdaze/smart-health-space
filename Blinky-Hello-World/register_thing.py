@@ -240,7 +240,7 @@ actions=[
     create_device_cert_and_manifest(),
     move_temp_files(),
     upload_manifest(),
-    os.remove("sdkconfig")
+    #os.remove("sdkconfig")
 ],
 title="AWS IoT Registration",
 description="Registers the thing to AWS IoT, attaches the certificate pulled from the secure element to \

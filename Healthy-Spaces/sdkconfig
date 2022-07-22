@@ -124,8 +124,8 @@ CONFIG_PARTITION_TABLE_MD5=y
 #
 # AWS IoT EduKit Configuration
 #
-CONFIG_WIFI_SSID="TP-HM_24G"
-CONFIG_WIFI_PASSWORD="kyjdzbh1!"
+CONFIG_WIFI_SSID="Sean"
+CONFIG_WIFI_PASSWORD="woshishui1!"
 # end of AWS IoT EduKit Configuration
 
 #
