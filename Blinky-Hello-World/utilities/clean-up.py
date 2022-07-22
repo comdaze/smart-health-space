@@ -196,8 +196,8 @@ for policy_name in POLICY_NAMES:
                 c_iot.delete_policy_version(policyName=policy_name,
                     policyVersionId=version['versionId'])
 
-        if policy_name == os.environ['IOT_POLICY']:
-            continue
+        # if policy_name == os.environ['IOT_POLICY']:
+        #     continue
         r_del_pol = c_iot.delete_policy(policyName=policy_name)
         print("r_del_pol: {}".format(r_del_pol))
     except c_iot.exceptions.ResourceNotFoundException:
