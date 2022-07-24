@@ -125,7 +125,7 @@ CONFIG_PARTITION_TABLE_MD5=y
 # AWS IoT EduKit Configuration
 #
 CONFIG_WIFI_SSID="AWSWorkshop"
-CONFIG_WIFI_PASSWORD="IoTP$AK1t"
+CONFIG_WIFI_PASSWORD="IoT@edukit"
 # end of AWS IoT EduKit Configuration
 
 #
@@ -1548,7 +1548,7 @@ CONFIG_LV_USE_WIN=y
 #
 # Amazon Web Services IoT Platform
 #
-CONFIG_AWS_IOT_MQTT_HOST="a2jtec7plm36gl.ats.iot.cn-north-1.amazonaws.com.cn"
+CONFIG_AWS_IOT_MQTT_HOST="a2u3inau7j0faa-ats.iot.ap-northeast-1.amazonaws.com"
 CONFIG_AWS_IOT_MQTT_PORT=8883
 CONFIG_AWS_IOT_MQTT_TX_BUF_LEN=512
 CONFIG_AWS_IOT_MQTT_RX_BUF_LEN=512
