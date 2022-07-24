@@ -27,10 +27,10 @@ import boto3
 from botocore.config import Config
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-e", "--endpoint", action="store", required=True, dest="host", help="Your AWS IoT custom endpoint")
-parser.add_argument("-id", "--clientId", action="store", dest="clientId", default="basicPubSub",
+parser.add_argument("-e", "--endpoint", action="store", required=False, dest="host", help="Your AWS IoT custom endpoint")
+parser.add_argument("-id", "--clientId", action="store", dest="clientId", required=True, default="basicPubSub",
                     help="Targeted client id")
-parser.add_argument("-r", "--region", action="store", required=True, dest="region", default="ap-northeast-1",
+parser.add_argument("-r", "--region", action="store", required=False, dest="region", default="ap-northeast-1",
                     help="AWS Region")
 
 args = parser.parse_args()
