@@ -266,8 +266,8 @@ void aws_iot_task(void *param) {
 	connectParams.keepAliveIntervalInSec = 600;
 	connectParams.isCleanSession = true;
 	connectParams.MQTTVersion = MQTT_3_1_1;
-	connectParams.pClientID = AWS_IOT_MQTT_CLIENT_ID;
-	connectParams.clientIDLen = (uint16_t) strlen(AWS_IOT_MQTT_CLIENT_ID);
+	connectParams.pClientID = client_id;
+	connectParams.clientIDLen = CLIENT_ID_LEN;
 	connectParams.isWillMsgPresent = false;
 
 	rc = aws_iot_mqtt_init(&iotCoreClient, &mqttInitParams);
