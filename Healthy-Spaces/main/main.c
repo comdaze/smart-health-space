@@ -83,13 +83,11 @@ bool pir_detected  = false;
 uint32_t mask_detection = 0U;
 uint16_t count_fr_aws = 0;
 
-char *iot_topic = "detect/mask";
-
 // *** iot callback handler ***********************************************************************
 void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, uint16_t topicNameLen,
                                     IoT_Publish_Message_Params *params, void *pData) {
     ESP_LOGI(TAG, "Subscribe callback");
-    //ESP_LOGI(TAG, "%.*s\t%.*s", topicNameLen, topicName, (int) params->payloadLen, (char *)params->payload);
+    ESP_LOGI(TAG, "%.*s\t%.*s", topicNameLen, topicName, (int) params->payloadLen, (char *)params->payload);
     JSONStatus_t result;
     char * outValue = NULL;
     uint32_t outValueLength = 0U;
@@ -230,20 +228,6 @@ void aws_iot_task(void *param) {
     // initialize the mqtt client
     AWS_IoT_Client iotCoreClient;
 
-	// IoT_Client_Init_Params mqttInitParams = iotClientInitParamsDefault;
-    // mqttInitParams.enableAutoReconnect = false; // We enable this later below
-	// mqttInitParams.pHostURL = HostAddress;
-	// mqttInitParams.port = port;
-	// mqttInitParams.pRootCALocation = (const char *)aws_root_ca_pem_start;
-	// mqttInitParams.pDeviceCertLocation = "#";
-	// mqttInitParams.pDevicePrivateKeyLocation = "#0";
-	// mqttInitParams.mqttCommandTimeout_ms = 20000;
-	// mqttInitParams.tlsHandshakeTimeout_ms = 5000;
-	// mqttInitParams.isSSLHostnameVerify = true;
-	// mqttInitParams.disconnectHandler = disconnect_callback_handler;
-	// mqttInitParams.disconnectHandlerData = NULL;
-
-
     #define CLIENT_ID_LEN (ATCA_SERIAL_NUM_SIZE * 2)
     char *client_id = malloc(CLIENT_ID_LEN + 1);
     ATCA_STATUS ret = Atecc608_GetSerialString(client_id);
@@ -258,9 +242,22 @@ void aws_iot_task(void *param) {
     xEventGroupWaitBits(wifi_event_group, CONNECTED_BIT,
                         false, true, portMAX_DELAY);
 
-    
+
     /*
     ESP_LOGI(TAG, "MQTT Init");
+
+    IoT_Client_Init_Params mqttInitParams = iotClientInitParamsDefault;
+    mqttInitParams.enableAutoReconnect = false; // We enable this later below
+	mqttInitParams.pHostURL = HostAddress;
+	mqttInitParams.port = port;
+	mqttInitParams.pRootCALocation = (const char *)aws_root_ca_pem_start;
+	mqttInitParams.pDeviceCertLocation = "#";
+	mqttInitParams.pDevicePrivateKeyLocation = "#0";
+	mqttInitParams.mqttCommandTimeout_ms = 20000;
+	mqttInitParams.tlsHandshakeTimeout_ms = 5000;
+	mqttInitParams.isSSLHostnameVerify = true;
+	mqttInitParams.disconnectHandler = disconnect_callback_handler;
+	mqttInitParams.disconnectHandlerData = NULL;
 
 	IoT_Client_Connect_Params connectParams = iotClientConnectParamsDefault;
 	connectParams.keepAliveIntervalInSec = 600;
@@ -397,8 +394,12 @@ void aws_iot_task(void *param) {
                     }
                 }
             }
-            // Subscribe a iot topic : "detect/mask"
-            aws_iot_mqtt_subscribe(&iotCoreClient, "detect/mask", 11, QOS0, iot_subscribe_callback_handler, NULL);
+            // Subscribe a IoT Topic
+            char *topic_surfix = "/detect/mask";
+            char *all_topic = (char *) malloc(strlen(client_id) + strlen(topic_surfix));
+            strcpy(all_topic, client_id);
+            strcat(all_topic, topic_surfix);
+            aws_iot_mqtt_subscribe(&iotCoreClient, all_topic, strlen(all_topic), QOS0, iot_subscribe_callback_handler, NULL);
 
             ESP_LOGI(TAG, "*****************************************************************************************");
             ESP_LOGI(TAG, "Stack remaining for task '%s' is %d bytes", pcTaskGetTaskName(NULL), uxTaskGetStackHighWaterMark(NULL));

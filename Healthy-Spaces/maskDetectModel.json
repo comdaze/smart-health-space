@@ -94,7 +94,7 @@
                             "actions": [
                                 {
                                     "iotTopicPublish": {
-                                        "mqttTopic": "'detect/mask'",
+                                        "mqttTopic": "'<<CLIENT_ID>>/detect/mask'",
                                         "payload": {
                                             "contentExpression": "'{\"detect_mask\":0}'",
                                             "type": "JSON"
