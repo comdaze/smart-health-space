@@ -230,18 +230,18 @@ void aws_iot_task(void *param) {
     // initialize the mqtt client
     AWS_IoT_Client iotCoreClient;
 
-	IoT_Client_Init_Params mqttInitParams = iotClientInitParamsDefault;
-    mqttInitParams.enableAutoReconnect = false; // We enable this later below
-	mqttInitParams.pHostURL = HostAddress;
-	mqttInitParams.port = port;
-	mqttInitParams.pRootCALocation = (const char *)aws_root_ca_pem_start;
-	mqttInitParams.pDeviceCertLocation = "#";
-	mqttInitParams.pDevicePrivateKeyLocation = "#0";
-	mqttInitParams.mqttCommandTimeout_ms = 20000;
-	mqttInitParams.tlsHandshakeTimeout_ms = 5000;
-	mqttInitParams.isSSLHostnameVerify = true;
-	mqttInitParams.disconnectHandler = disconnect_callback_handler;
-	mqttInitParams.disconnectHandlerData = NULL;
+	// IoT_Client_Init_Params mqttInitParams = iotClientInitParamsDefault;
+    // mqttInitParams.enableAutoReconnect = false; // We enable this later below
+	// mqttInitParams.pHostURL = HostAddress;
+	// mqttInitParams.port = port;
+	// mqttInitParams.pRootCALocation = (const char *)aws_root_ca_pem_start;
+	// mqttInitParams.pDeviceCertLocation = "#";
+	// mqttInitParams.pDevicePrivateKeyLocation = "#0";
+	// mqttInitParams.mqttCommandTimeout_ms = 20000;
+	// mqttInitParams.tlsHandshakeTimeout_ms = 5000;
+	// mqttInitParams.isSSLHostnameVerify = true;
+	// mqttInitParams.disconnectHandler = disconnect_callback_handler;
+	// mqttInitParams.disconnectHandlerData = NULL;
 
 
     #define CLIENT_ID_LEN (ATCA_SERIAL_NUM_SIZE * 2)
@@ -259,7 +259,7 @@ void aws_iot_task(void *param) {
                         false, true, portMAX_DELAY);
 
     
-    
+    /*
     ESP_LOGI(TAG, "MQTT Init");
 
 	IoT_Client_Connect_Params connectParams = iotClientConnectParamsDefault;
@@ -289,7 +289,7 @@ void aws_iot_task(void *param) {
 		IOT_ERROR("Unable to set Auto Reconnect to true - %d", rc);
 		abort();
 	}
-
+*/
 
     // initialize the device shadow
 
